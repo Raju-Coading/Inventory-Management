@@ -1,0 +1,23 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build output
+[Bb]in/
+[Oo]bj/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Local database
+*.mdf
+*.ldf
+
+# OS
+.DS_Store
+Thumbs.db
