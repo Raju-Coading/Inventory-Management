@@ -1,8 +1,10 @@
 ﻿using InventoryManagement.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InventoryManagement.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/stock")]
     public class StockController : ControllerBase
@@ -43,7 +45,7 @@ namespace InventoryManagement.API.Controllers
             if (!result)
                 return BadRequest(
                     "Product not found or quantity is invalid.");
-
+        
             return Ok(new
             {
                 Message = "Stock added successfully."

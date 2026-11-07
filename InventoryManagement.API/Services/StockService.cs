@@ -1,18 +1,24 @@
-﻿using InventoryManagement.API.Repositories;
+﻿using InventoryManagement.API.Data;
+using InventoryManagement.API.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace InventoryManagement.API.Services
 {
     public class StockService : IStockService
     {
+        private readonly ApplicationDbContext _context;
         private readonly IProductRepository _repository;
+        private readonly ILogger<StockService> _logger;
 
-        public StockService(IProductRepository repository)
+        public StockService(ApplicationDbContext context, ILogger<StockService> logger)
         {
-            _repository = repository;
+            _context = context;
+            _logger = logger;
         }
 
         public async Task<int?> GetStockAsync(int productId)
         {
+            _logger.LogInformation("Getting stock for product ID {ProductId}.", productId);
             var product = await _repository.GetByIdAsync(productId);
 
             if (product == null)
