@@ -8,9 +8,7 @@ namespace InventoryManagement.API.Services
         private readonly IProductRepository _repository;
         private readonly ILogger<ProductService> _logger;
 
-        public ProductService(
-      IProductRepository productRepository,
-      ILogger<ProductService> logger)
+        public ProductService( IProductRepository productRepository,ILogger<ProductService> logger)
         {
             _repository = productRepository;
             _logger = logger;

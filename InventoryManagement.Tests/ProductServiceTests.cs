@@ -107,9 +107,9 @@ namespace InventoryManagement.Tests
             var product = new Product
             {
                 Id = 1,
-                Name = "Mouse",
-                Price = 500,
-                StockQuantity = 10
+                Name = "Mi Tv 32 Inch",
+                Price = 250000,
+                StockQuantity = 2
             };
 
             repository.Setup(r => r.CreateAsync(product))
@@ -123,7 +123,7 @@ namespace InventoryManagement.Tests
 
       
             Assert.NotNull(result);
-            Assert.Equal("Mouse", result.Name);
+            Assert.Equal("Mi Tv 32 Inch", result.Name);
         }
 
         [Fact]
@@ -136,9 +136,9 @@ namespace InventoryManagement.Tests
             var product = new Product
             {
                 Id = 1,
-                Name = "Laptop",
-                Price = 50000,
-                StockQuantity = 10
+                Name = "Dell Laptop",
+                Price = 520000,
+                StockQuantity = 1
             };
 
             var service = new ProductService(

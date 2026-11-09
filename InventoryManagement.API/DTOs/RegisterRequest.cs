@@ -15,5 +15,10 @@ namespace InventoryManagement.API.DTOs
         [Required]
         [MinLength(6)]
         public string Password { get; set; } = string.Empty;
+
+        [Required]
+        [MinLength(6)]
+        [Compare(nameof(Password))]
+        public string RePassword { get; set; } = string.Empty;
     }
 }
