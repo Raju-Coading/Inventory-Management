@@ -1,6 +1,7 @@
 ﻿using InventoryManagement.API.Models;
 using InventoryManagement.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace InventoryManagement.API.Controllers
 {
@@ -15,16 +16,20 @@ namespace InventoryManagement.API.Controllers
             _service = service;
         }
 
-        // GET: api/products
+       
         [HttpGet]
+        [SwaggerOperation(Summary = "Get all product")]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
             var products = await _service.GetAllAsync();
             return Ok(products);
         }
 
-        // GET: api/products/5
+        
         [HttpGet("{id}")]
+
+        [SwaggerOperation(Summary = "Get product By Id")]
+
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
             var product = await _service.GetByIdAsync(id);
@@ -35,10 +40,21 @@ namespace InventoryManagement.API.Controllers
             return Ok(product);
         }
 
-        // POST: api/products
+
         [HttpPost]
-        public async Task<ActionResult<Product>> CreateProduct(Product product)
+        [SwaggerOperation(Summary = "Create product")]
+        public async Task<ActionResult<Product>> CreateProduct(CreateProductDto productDto)
         {
+           
+            var product = new Product
+            {
+                Name = productDto.Name,
+                Description = productDto.Description,
+                Price = productDto.Price,
+                StockQuantity = productDto.StockQuantity,
+                CreatedAt = DateTime.UtcNow
+            };
+
             var createdProduct = await _service.CreateAsync(product);
 
             return CreatedAtAction(
@@ -47,8 +63,10 @@ namespace InventoryManagement.API.Controllers
                 createdProduct);
         }
 
-        // PUT: api/products/5
+
         [HttpPut("{id}")]
+
+        [SwaggerOperation(Summary = "Update product by ID")]
         public async Task<IActionResult> UpdateProduct(
             int id,
             Product product)
@@ -61,8 +79,10 @@ namespace InventoryManagement.API.Controllers
             return NoContent();
         }
 
-        // DELETE: api/products/5
+        
         [HttpDelete("{id}")]
+
+        [SwaggerOperation(Summary = "Delete product by ID")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var deleted = await _service.DeleteAsync(id);

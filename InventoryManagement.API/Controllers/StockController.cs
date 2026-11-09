@@ -1,6 +1,7 @@
 ﻿using InventoryManagement.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace InventoryManagement.API.Controllers
 {
@@ -15,9 +16,10 @@ namespace InventoryManagement.API.Controllers
         {
             _stockService = stockService;
         }
-
-        // GET: api/stock/1
         [HttpGet("{productId}")]
+        [SwaggerOperation(Summary = "Get all product Stock")]
+
+
         public async Task<IActionResult> GetStock(int productId)
         {
             var stock = await _stockService.GetStockAsync(productId);
@@ -32,8 +34,9 @@ namespace InventoryManagement.API.Controllers
             });
         }
 
-        // POST: api/stock/1/add
+     
         [HttpPost("{productId}/add")]
+        [SwaggerOperation(Summary = "Add New product Stock")]
         public async Task<IActionResult> AddStock(
             int productId,
             [FromQuery] int quantity)
@@ -52,8 +55,8 @@ namespace InventoryManagement.API.Controllers
             });
         }
 
-        // POST: api/stock/1/reduce
         [HttpPost("{productId}/reduce")]
+        [SwaggerOperation(Summary = "Reduce product Stock")]
         public async Task<IActionResult> ReduceStock(
             int productId,
             [FromQuery] int quantity)

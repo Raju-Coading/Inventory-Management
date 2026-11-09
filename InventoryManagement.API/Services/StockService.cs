@@ -6,13 +6,13 @@ namespace InventoryManagement.API.Services
 {
     public class StockService : IStockService
     {
-        private readonly ApplicationDbContext _context;
+        
         private readonly IProductRepository _repository;
         private readonly ILogger<StockService> _logger;
 
         public StockService(ApplicationDbContext context, ILogger<StockService> logger)
         {
-            _context = context;
+           
             _logger = logger;
         }
 
@@ -54,7 +54,7 @@ namespace InventoryManagement.API.Services
             if (product == null)
                 return false;
 
-            // Prevent negative stock
+          
             if (product.StockQuantity < quantity)
                 return false;
 

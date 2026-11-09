@@ -9,7 +9,6 @@ using System.Text;
 using InventoryManagement.API.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
-// Register controller support
 builder.Services.AddControllers();
 
 
@@ -18,7 +17,10 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.EnableAnnotations();
+});
 builder.Services.AddScoped<JwtService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -45,7 +47,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
-// Enable Swagger in development
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

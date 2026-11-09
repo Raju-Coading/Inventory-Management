@@ -1,6 +1,7 @@
 ﻿using InventoryManagement.API.DTOs;
 using InventoryManagement.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace InventoryManagement.API.Controllers
 {
@@ -15,8 +16,8 @@ namespace InventoryManagement.API.Controllers
             _authService = authService;
         }
 
-        // POST: api/auth/register
         [HttpPost("register")]
+        [SwaggerOperation(Summary = "Register New User")]
         public async Task<IActionResult> Register(RegisterRequest request)
         {
             var result = await _authService.RegisterAsync(request);
@@ -32,8 +33,9 @@ namespace InventoryManagement.API.Controllers
             });
         }
 
-        // POST: api/auth/login
+       
         [HttpPost("login")]
+        [SwaggerOperation(Summary = "Login For Register User")]
         public async Task<IActionResult> Login(LoginRequest request)
         {
             var result = await _authService.LoginAsync(request);
