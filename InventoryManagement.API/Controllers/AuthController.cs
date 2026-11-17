@@ -1,54 +1,57 @@
-﻿using InventoryManagement.API.DTOs;
-using InventoryManagement.API.Services;
+using InventoryManagement.Application.DTOs;
+using InventoryManagement.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace InventoryManagement.API.Controllers
+namespace InventoryManagement.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+public class AuthController : ControllerBase
 {
-    [ApiController]
-    [Route("api/auth")]
-    public class AuthController : ControllerBase
+    private readonly IAuthService _authService;
+
+    public AuthController(IAuthService authService)
     {
-        private readonly IAuthService _authService;
+        _authService = authService;
+    }
 
-        public AuthController(IAuthService authService)
+    [AllowAnonymous]
+    [HttpPost("register")]
+    [SwaggerOperation(Summary = "Register New User")]
+    public async Task<IActionResult> Register(RegisterDto dto)
+    {
+        var result = await _authService.RegisterAsync(dto);
+
+        return Ok(result);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("login")]
+    [SwaggerOperation(Summary = "LoginUser")]
+    public async Task<IActionResult> Login(LoginDto dto)
+    {
+        var result = await _authService.LoginAsync(dto);
+
+        return Ok(result);
+    }
+    [HttpPost("logout")]
+    [SwaggerOperation(Summary = "LogOutUser")]
+    public async Task<IActionResult> Logout()
+    {
+        var token = Request.Headers["Authorization"]
+            .ToString()
+            .Replace("Bearer ", "");
+
+        var result = await _authService.LogoutAsync(token);
+
+        if (!result)
         {
-            _authService = authService;
+            return BadRequest("Logout failed.");
         }
 
-        [HttpPost("register")]
-        [SwaggerOperation(Summary = "Register New User")]
-        public async Task<IActionResult> Register(RegisterRequest request)
-        {
-            var result = await _authService.RegisterAsync(request);
-
-            if (!result)
-            {
-                return BadRequest("Email is already registered.");
-            }
-
-            return Ok(new
-            {
-                Message = "User registered successfully."
-            });
-        }
-
-       
-        [HttpPost("login")]
-        [SwaggerOperation(Summary = "Login For Register User")]
-        public async Task<IActionResult> Login(LoginRequest request)
-        {
-            var result = await _authService.LoginAsync(request);
-
-            if (result == null)
-            {
-                return Unauthorized("Invalid email or password.");
-            }
-
-            return Ok(new LoginResponse
-            {
-                Token = result
-            });
-        }
+        return Ok("Logout successful.");
     }
 }
