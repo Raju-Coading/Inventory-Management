@@ -1,96 +1,82 @@
-﻿using InventoryManagement.API.Models;
-using InventoryManagement.API.Services;
+using InventoryManagement.Application.DTOs;
+using InventoryManagement.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace InventoryManagement.API.Controllers
+namespace InventoryManagement.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+public class ProductController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ProductsController : ControllerBase
+    private readonly IProductService _productService;
+
+    public ProductController(IProductService productService)
     {
-        private readonly IProductService _service;
+        _productService = productService;
+    }
 
-        public ProductsController(IProductService service)
+    [HttpPost]
+    [SwaggerOperation(Summary = "Create New Product")]
+    public async Task<IActionResult> Create(CreateProductDto dto)
+    {
+        var product = await _productService.CreateAsync(dto);
+
+        return Ok(product);
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    [SwaggerOperation(Summary = "GetAllProduct")]
+    public async Task<IActionResult> GetAll()
+    {
+        var products = await _productService.GetAllAsync();
+
+        return Ok(products);
+    }
+
+    [HttpGet("{id}")]
+    [AllowAnonymous]
+    [SwaggerOperation(Summary = "GetProductById")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var product = await _productService.GetByIdAsync(id);
+
+        if (product == null)
         {
-            _service = service;
+            return NotFound("Product not found.");
         }
 
-       
-        [HttpGet]
-        [SwaggerOperation(Summary = "Get all product")]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        return Ok(product);
+    }
+
+    [HttpPut("{id}")]
+    [SwaggerOperation(Summary = "UpdateProduct")]
+    public async Task<IActionResult> Update(int id, ProductDto dto)
+    {
+        var result = await _productService.UpdateAsync(id, dto);
+
+        if (!result)
         {
-            var products = await _service.GetAllAsync();
-            return Ok(products);
+            return NotFound("Product not found.");
         }
 
-        
-        [HttpGet("{id}")]
+        return Ok("Product updated successfully.");
+    }
 
-        [SwaggerOperation(Summary = "Get product By Id")]
+    [HttpDelete("{id}")]
+    [SwaggerOperation(Summary = "DeleteProduct")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var result = await _productService.DeleteAsync(id);
 
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        if (!result)
         {
-            var product = await _service.GetByIdAsync(id);
-
-            if (product == null)
-                return NotFound();
-
-            return Ok(product);
+            return NotFound("Product not found.");
         }
 
-
-        [HttpPost]
-        [SwaggerOperation(Summary = "Create product")]
-        public async Task<ActionResult<Product>> CreateProduct(CreateProductDto productDto)
-        {
-           
-            var product = new Product
-            {
-                Name = productDto.Name,
-                Description = productDto.Description,
-                Price = productDto.Price,
-                StockQuantity = productDto.StockQuantity,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            var createdProduct = await _service.CreateAsync(product);
-
-            return CreatedAtAction(
-                nameof(GetProduct),
-                new { id = createdProduct.Id },
-                createdProduct);
-        }
-
-
-        [HttpPut("{id}")]
-
-        [SwaggerOperation(Summary = "Update product by ID")]
-        public async Task<IActionResult> UpdateProduct(
-            int id,
-            Product product)
-        {
-            var updated = await _service.UpdateAsync(id, product);
-
-            if (!updated)
-                return NotFound();
-
-            return NoContent();
-        }
-
-        
-        [HttpDelete("{id}")]
-
-        [SwaggerOperation(Summary = "Delete product by ID")]
-        public async Task<IActionResult> DeleteProduct(int id)
-        {
-            var deleted = await _service.DeleteAsync(id);
-
-            if (!deleted)
-                return NotFound();
-
-            return NoContent();
-        }
+        return Ok("Product deleted successfully.");
     }
 }
